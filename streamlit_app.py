@@ -38,22 +38,25 @@ try:
 except URLError as e:
     streamlit.error()
 
+my_data_rows = my_cur.execute("select * from PC_RIVERY_DB.PUBLIC.FRUIT_LOAD_LIST").fetchall()
+streamlit.header("The fruit load list contains:")
+def get_fruit_load_list():
+  with my_cnx.cursor() as my_cur
+    my_cur.execute("use warehouse compute_wh")
+    my_cur.execute("select * from PC_RIVERY_DB.PUBLIC.FRUIT_LOAD_LIST")
+    return my_cur.fetchall()
+  
+if streamlit.button('Get Fruit Load List'):
+  my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
+  my_data_rows = get_fruit_load_list()
+  streamlit.dataframe(my_data_rows)
+  
 streamlit.stop()
-
-my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
-my_cur = my_cnx.cursor()
-my_cur.execute("use warehouse compute_wh")
 
 fruit_choice_2 = streamlit.text_input('What fruit would you like to add?')
 if fruit_choice_2 != '':
   my_cur.execute(f"INSERT INTO PC_RIVERY_DB.PUBLIC.FRUIT_LOAD_LIST (FRUIT_NAME) VALUES ('{fruit_choice_2}')")
   streamlit.write('Thanks for adding:', fruit_choice_2)
   fruit_choice_2 = ''
-  
-my_data_rows = my_cur.execute("select * from PC_RIVERY_DB.PUBLIC.FRUIT_LOAD_LIST").fetchall()
-streamlit.header("The fruit load list contains:")
-streamlit.dataframe(my_data_rows)
-
-streamlit.header('What up bros!')
 
   
